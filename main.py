@@ -49,7 +49,9 @@ class InputSource(IntEnum):
     DVI1 = 0x03
     VGA1 = 0x01
     USBC = 0x1F
-    # Add more if needed
+    # Samsung G6 27in: composite-1/2 but it's actually HDMI1/2
+    HDMI1_ALT = 0x05
+    HDMI2_ALT = 0x06
 
 
 INPUT_NAME_MAP = {v.value: k for k, v in InputSource.__members__.items()}
@@ -163,6 +165,14 @@ def set_monitor_inputs(assignments):
         logger.info("No monitors detected.")
         return
 
+    time.sleep(5)  # wait 5 seconds to swap b/c of mac and input source
+    logger.info("Waiting 5 seconds to swap inputs...Please switch keyboard and mouse now...")
+    counter = 0
+    while counter < 5:
+        logger.info(f"{counter}/5")
+        time.sleep(1)
+        counter += 1
+
     for assignment in assignments:
         if "=" not in assignment:
             logger.info(f"Ignoring invalid assignment: {assignment}")
@@ -190,7 +200,7 @@ def set_monitor_inputs(assignments):
 
 def toggle_inputs():
     # Define your monitor config sets
-    profiles = {"work": ["1=HDMI1", "2=HDMI1"], "personal": ["1=DP1", "2=DP1"]}
+    profiles = {"work": ["1=HDMI1", "2=HDMI2_ALT"], "personal": ["1=DP1", "2=DP1"]}
 
     # Load last state
     if os.path.exists(CONFIG_FILE):
